@@ -15,8 +15,6 @@ AAnimalBaseController::AAnimalBaseController()
 	//HearingConfig->DetectionByAffiliation.DetectAllFlags();
 	AIPerception->ConfigureSense(*HearingConfig);
 	AIPerception->SetDominantSense(SightConfig->GetSenseImplementation());
-
-	StateTreeComponent = CreateDefaultSubobject<UStateTreeAIComponent>(TEXT("StateTreeComponent"));
 }
 
 void AAnimalBaseController::BeginPlay()

@@ -5,8 +5,8 @@
 #include "AnimalDataAsset.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Components/TextRenderComponent.h"
-#include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include <Components/TextRenderComponent.h>
+#include <Perception/AIPerceptionStimuliSourceComponent.h>
 #include "AnimalBase.generated.h"
 
 UCLASS()

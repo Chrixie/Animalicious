@@ -8,7 +8,6 @@
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AISenseConfig_Hearing.h"
 #include "AnimalBase.h"
-#include "Components/StateTreeAIComponent.h"
 #include "AnimalBaseController.generated.h"
 
 struct FAIStimulus;
@@ -30,9 +29,6 @@ public:
 
 	UPROPERTY()
 	AAnimalBase* AnimalBase;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "StateTree")
-	TObjectPtr<UStateTreeAIComponent> StateTreeComponent;
 
 	//--------------------------------------------------------------------------------------------------------------
 
