@@ -14,7 +14,6 @@ AAnimalBaseController::AAnimalBaseController()
 	HearingConfig = CreateDefaultSubobject<UAISenseConfig_Hearing>(TEXT("HearingConfig"));
 	//HearingConfig->DetectionByAffiliation.DetectAllFlags();
 	AIPerception->ConfigureSense(*HearingConfig);
-	AIPerception->SetDominantSense(SightConfig->GetSenseImplementation());
 
 	StateTreeComponent = CreateDefaultSubobject<UStateTreeAIComponent>(TEXT("StateTreeComponent"));
 }
@@ -30,17 +29,31 @@ void AAnimalBaseController::OnPossess(APawn* Inpawn)
 	Super::OnPossess(Inpawn);
 
 	AnimalBase = Cast<AAnimalBase>(Inpawn);
-	if (AnimalBase && AnimalBase->AnimalDA)
+
+	if (AnimalBase && AnimalBase->GetAnimalDA())
 	{
-		SightConfig->SightRadius = AnimalBase->AnimalDA->SightDistance;
-		SightConfig->LoseSightRadius = AnimalBase->AnimalDA->LoseSightRadius;
-		SightConfig->DetectionByAffiliation.DetectAllFlags();
+		const UAnimalDataAsset* AnimalDA = AnimalBase->GetAnimalDA();
+		const FDetection& AnimalDADetection = AnimalDA->Detection;
+		const FStimuli& AnimalDAStimuli = AnimalDA->Stimuli;
+
+		SightConfig->SightRadius = AnimalDAStimuli.SightDistance;
+		SightConfig->LoseSightRadius = AnimalDAStimuli.LoseSightRadius;
+		SightConfig->DetectionByAffiliation.bDetectEnemies = AnimalDADetection.bDetectEnemies;
+		SightConfig->DetectionByAffiliation.bDetectFriendlies = AnimalDADetection.bDetectFriendlies;
+		SightConfig->DetectionByAffiliation.bDetectNeutrals = AnimalDADetection.bDetectNeutral;
+		SightConfig->PeripheralVisionAngleDegrees = AnimalDAStimuli.FOV;
 		AIPerception->ConfigureSense(*SightConfig);
 
-		HearingConfig->HearingRange = AnimalBase->AnimalDA->HearingDistance;
-		HearingConfig->LoSHearingRange = AnimalBase->AnimalDA->LosHearingRange;
-		HearingConfig->SetMaxAge(AnimalBase->AnimalDA->MaxAge);
+		HearingConfig->HearingRange = AnimalDAStimuli.HearingDistance;
+		HearingConfig->DetectionByAffiliation.bDetectEnemies = AnimalDADetection.bDetectEnemies;
+		HearingConfig->DetectionByAffiliation.bDetectFriendlies = AnimalDADetection.bDetectFriendlies;
+		HearingConfig->DetectionByAffiliation.bDetectNeutrals = AnimalDADetection.bDetectNeutral;
+		HearingConfig->SetMaxAge(AnimalDAStimuli.MaxAge);
 
+		
+	
+		AIPerception->ConfigureSense(*HearingConfig);
+		AIPerception->RequestStimuliListenerUpdate();
 		AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &AAnimalBaseController::OnTargetPerceptionUpdated);
 	}
 	else
@@ -52,8 +65,8 @@ void AAnimalBaseController::OnPossess(APawn* Inpawn)
 
 void AAnimalBaseController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
-	if(Stimulus.WasSuccessfullySensed())
+	if (Stimulus.WasSuccessfullySensed())
 	{
-	AnimalBase->SetDebugStatusText(FText::FromString("Sensed"));
+		AnimalBase->SetDebugStatusText(FText::FromString("Sensed"));
 	}
 }

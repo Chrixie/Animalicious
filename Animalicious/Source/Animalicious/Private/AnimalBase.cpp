@@ -9,9 +9,13 @@ AAnimalBase::AAnimalBase()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-
+	
 	AIPerceptionSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("AIPerceptionSource"));
+	AIPerceptionSource->RegisterForSense(TSubclassOf<UAISense_Sight>());
+	AIPerceptionSource->RegisterForSense(TSubclassOf<UAISense_Hearing>());
+	AIPerceptionSource->RegisterWithPerceptionSystem();
+	
+	
 	StatusText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("StatusText"));
 	StatusTextInit();
 }
@@ -38,9 +42,13 @@ void AAnimalBase::BeginPlay()
 void AAnimalBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	DecreseHunger(DeltaTime);
-	DecreseThirst(DeltaTime);
+	
+	StatusText->SetWorldRotation(FRotator(0.0f,0.0f,0.0f));
+	
+	UAISense_Hearing::ReportNoiseEvent(GetWorld(), GetActorLocation(), 1, this, 0);
+	
+	DecreaseHunger(DeltaTime);
+	DecreaseThirst(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -53,19 +61,21 @@ void AAnimalBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 void AAnimalBase::SetupStats()
 {
-	CurrentHealth = AnimalDA->MaxHealth;
-	CurrentHunger = AnimalDA->MaxHunger;
-	CurrentThirst = AnimalDA->MaxThirst;
+	CurrentHealth = AnimalDA->SurvivalStats.MaxHealth;
+	CurrentHunger = AnimalDA->SurvivalStats.MaxHunger;
+	CurrentThirst = AnimalDA->SurvivalStats.MaxThirst;
+	IsPredator = AnimalDA->SurvivalStats.IsPredator;
+	
 }
 
-void AAnimalBase::DecreseHunger(float DeltaTime)
+void AAnimalBase::DecreaseHunger(float DeltaTime)
 {
-	CurrentHunger -= AnimalDA->DecayValue * DeltaTime;
+	CurrentHunger -= AnimalDA->SurvivalStats.DecayValue * DeltaTime;
 }
 
-void AAnimalBase::DecreseThirst(float DeltaTime)
+void AAnimalBase::DecreaseThirst(float DeltaTime)
 {
-	CurrentThirst -= AnimalDA->DecayValue * DeltaTime;
+	CurrentThirst -= AnimalDA->SurvivalStats.DecayValue * DeltaTime;
 }
 
 void AAnimalBase::SetDebugStatusText(FText StatusDebugText)
@@ -75,7 +85,7 @@ void AAnimalBase::SetDebugStatusText(FText StatusDebugText)
 
 void AAnimalBase::StatusTextInit()
 {
-	//StatusText->SetupAttachment(RootComponent);
+	StatusText->SetupAttachment(RootComponent);
 	StatusText->SetHorizontalAlignment(EHTA_Center);
 	StatusText->SetWorldSize(50.0f);
 	StatusText->SetTextRenderColor(FColor::Red);

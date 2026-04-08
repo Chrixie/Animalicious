@@ -6,39 +6,67 @@
 #include "Engine/DataAsset.h"
 #include "AnimalDataAsset.generated.h"
 
-/**
- * 
- */
-UCLASS()
-class ANIMALICIOUS_API UAnimalDataAsset : public UPrimaryDataAsset
+USTRUCT(BlueprintType)
+struct FSurivalStats
 {
 	GENERATED_BODY()
 
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Survival Stats")
+	UPROPERTY(EditAnywhere, Category = "Survival Stats")
 	float MaxHealth = 100.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Survival Stats")
+	UPROPERTY(EditAnywhere, Category = "Survival Stats")
 	float Strength = 1.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Survival Stats")
+	UPROPERTY(EditAnywhere, Category = "Survival Stats")
 	float MaxHunger = 100.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Survival Stats")
+	UPROPERTY(EditAnywhere, Category = "Survival Stats")
 	float MaxThirst = 100.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Survival Stats")
-	float DecayValue = 1.0f;
+	UPROPERTY(EditAnywhere, Category = "Survival Stats")
+	float DecayValue = 1.0f;	
+	
+	UPROPERTY(EditAnywhere, Category = "Survival Stats")
+	bool IsPredator = false;
+};
 
-	//-----------------------------------------------------------------------------------------//
+//USTRUCT(BlueprintType)
+//struct FAnimalSightSettings
+//{
+//	GENERATED_BODY()
+//
+//
+//};
+
+USTRUCT(BlueprintType)
+struct FMoveStats
+{
+	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement Stats")
 	float WalkSpeed = 100.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement Stats")
 	float SprintSpeed = 200.0f;
+};
 
-	//-----------------------------------------------------------------------------------------//
+USTRUCT(BlueprintType)
+struct FDetection
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	bool bDetectEnemies = false;
+	UPROPERTY(EditAnywhere)
+	bool bDetectFriendlies = false;
+	UPROPERTY(EditAnywhere)
+	bool bDetectNeutral = false;
+};
+
+USTRUCT(BlueprintType)
+struct FStimuli 
+{
+	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Stimuli|Sight")
 	float SightDistance = 300.0f;
@@ -50,8 +78,33 @@ public:
 	float HearingDistance = 1000.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Stimuli|Hearing")
-	float LosHearingRange = 1000.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Stimuli|Hearing")
 	float MaxAge = 0;
+	
+	UPROPERTY(EditAnywhere, blueprintReadWrite, Category = "AI Stimuli|Hearing")
+	float FOV = 180;
+};
+
+UCLASS()
+class ANIMALICIOUS_API UAnimalDataAsset : public UPrimaryDataAsset
+{
+	GENERATED_BODY()
+
+
+public:
+
+	//UPROPERTY(EditAnywhere)
+	//FAnimalSightSettings SightSettings;
+
+	UPROPERTY(EditAnywhere)
+	FDetection Detection;
+
+	UPROPERTY(EditAnywhere)
+	FSurivalStats SurvivalStats;
+
+	UPROPERTY(EditAnywhere)
+	FMoveStats FMoveStats;
+
+	UPROPERTY(EditAnywhere)
+	FStimuli Stimuli;
+
 };

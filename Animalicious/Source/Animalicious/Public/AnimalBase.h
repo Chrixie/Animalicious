@@ -16,11 +16,19 @@ class ANIMALICIOUS_API AAnimalBase : public ACharacter
 
 
 public:
-	// Sets default values for this character's properties
 	AAnimalBase();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DATA")
-	TObjectPtr<UAnimalDataAsset> AnimalDA;
+	virtual void Tick(float DeltaTime) override;
+
+	FORCEINLINE UAnimalDataAsset* GetAnimalDA() const { return AnimalDA; }
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UFUNCTION(BlueprintCallable)
+	void SetDebugStatusText(FText StatusDebugText);
+
+	//------------------------------------------------------------------------------------------------------------
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float CurrentHealth;
@@ -30,28 +38,24 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float CurrentThirst;
-
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool IsPredator;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UTextRenderComponent> StatusText;
-
 
 	UPROPERTY(BlueprintReadOnly, Category = "Perception Listener")
 	TObjectPtr<UAIPerceptionStimuliSourceComponent> AIPerceptionSource;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DATA")
+	UAnimalDataAsset* AnimalDA;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	UFUNCTION(BlueprintCallable)
-	void SetDebugStatusText(FText StatusDebugText);
 
 
 private:
@@ -59,8 +63,10 @@ private:
 	//Setting up all stat values from Data Asset
 	void SetupStats();
 
-	void DecreseHunger(float DeltaTime);
-	void DecreseThirst(float DeltaTime);
+	void DecreaseHunger(float DeltaTime);
+	void DecreaseThirst(float DeltaTime);
 
 	void StatusTextInit();
+
+
 };

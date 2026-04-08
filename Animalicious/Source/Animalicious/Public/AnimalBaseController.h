@@ -31,6 +31,8 @@ public:
 	UPROPERTY()
 	AAnimalBase* AnimalBase;
 
+	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "StateTree")
 	TObjectPtr<UStateTreeAIComponent> StateTreeComponent;
 
