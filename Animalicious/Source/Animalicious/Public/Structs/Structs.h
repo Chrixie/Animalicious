@@ -20,7 +20,7 @@ public:
 	FVector ReceiverLocation;
 	
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = AIStimulus)
-	TObjectPtr<AActor> SourceActor;
+	TObjectPtr<AActor> SourceActor;	
 	
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = AIStimulus)
 	FGameplayTagContainer SourceTags;

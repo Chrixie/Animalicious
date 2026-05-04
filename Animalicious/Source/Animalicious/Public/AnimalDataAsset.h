@@ -3,20 +3,45 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Engine/DataAsset.h"
 #include "AnimalDataAsset.generated.h"
 
 USTRUCT(BlueprintType)
-struct FSurivalStats
+struct FGamePlayTagOrThreats
 {
 	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere)
+	FGameplayTagContainer ThreatTags;	
+	
+	UPROPERTY(EditAnywhere)
+	FGameplayTagContainer PreyTags;
+	
+	UPROPERTY(EditAnywhere)
+	FGameplayTag GameplayTag;
+};
 
-	UPROPERTY(EditAnywhere, Category = "Survival Stats")
+USTRUCT(BlueprintType)
+struct FCombatStats
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere)
 	float MaxHealth = 100.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Survival Stats")
-	float Strength = 1.0f;
+	UPROPERTY(EditAnywhere)
+	float Damage = 1.0f;
+	
+	UPROPERTY(EditAnywhere)
+	bool IsPredator = false;
+};
 
+USTRUCT(BlueprintType)
+struct FSurvivalStats
+{
+	GENERATED_BODY()
+	
 	UPROPERTY(EditAnywhere, Category = "Survival Stats")
 	float MaxHunger = 100.0f;
 
@@ -25,18 +50,7 @@ struct FSurivalStats
 
 	UPROPERTY(EditAnywhere, Category = "Survival Stats")
 	float DecayValue = 1.0f;	
-	
-	UPROPERTY(EditAnywhere, Category = "Survival Stats")
-	bool IsPredator = false;
 };
-
-//USTRUCT(BlueprintType)
-//struct FAnimalSightSettings
-//{
-//	GENERATED_BODY()
-//
-//
-//};
 
 USTRUCT(BlueprintType)
 struct FMoveStats
@@ -89,20 +103,21 @@ class ANIMALICIOUS_API UAnimalDataAsset : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 
-
 public:
-
-	//UPROPERTY(EditAnywhere)
-	//FAnimalSightSettings SightSettings;
-
 	UPROPERTY(EditAnywhere)
-	FDetection Detection;
-
+	FGamePlayTagOrThreats GamePlayTagOrThreats;
+	
 	UPROPERTY(EditAnywhere)
-	FSurivalStats SurvivalStats;
-
+	FCombatStats CombatStats;
+	
+	UPROPERTY(EditAnywhere)
+	FSurvivalStats SurvivalStats;
+	
 	UPROPERTY(EditAnywhere)
 	FMoveStats FMoveStats;
+	
+	UPROPERTY(EditAnywhere)
+	FDetection Detection;
 
 	UPROPERTY(EditAnywhere)
 	FStimuli Stimuli;

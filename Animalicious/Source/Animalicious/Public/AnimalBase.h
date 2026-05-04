@@ -29,9 +29,17 @@ public:
 	void SetDebugStatusText(FText StatusDebugText);
 
 	//------------------------------------------------------------------------------------------------------------
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DATA")
+	UAnimalDataAsset* AnimalDA;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float CurrentHealth;
+	float CurrentHealth;	
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Damage;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsDead;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float CurrentHunger;
@@ -43,18 +51,26 @@ public:
 	bool IsPredator;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGameplayTagContainer ThreatTags;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGameplayTagContainer PreyTags;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGameplayTag GameplayTag;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UTextRenderComponent> StatusText;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Perception Listener")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Perception Listener")
 	TObjectPtr<UAIPerceptionStimuliSourceComponent> AIPerceptionSource;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DATA")
-	UAnimalDataAsset* AnimalDA;
 
 protected:
+	virtual void PostInitializeComponents() override;
+	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
 
 
 

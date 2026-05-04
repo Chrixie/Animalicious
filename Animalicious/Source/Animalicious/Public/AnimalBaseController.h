@@ -7,6 +7,7 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AISenseConfig_Hearing.h"
+#include "Perception/AISenseConfig_Damage.h"
 #include "AnimalBase.h"
 #include "Components/StateTreeAIComponent.h"
 #include "AnimalBaseController.generated.h"
@@ -27,6 +28,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Perception")
 	TObjectPtr<UAISenseConfig_Hearing> HearingConfig;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Perception")
+	TObjectPtr<UAISenseConfig_Damage> DamageConfig;
 
 	UPROPERTY()
 	AAnimalBase* AnimalBase;
@@ -40,11 +44,15 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
+	UFUNCTION(BlueprintCallable)
+	void OnPerception(AActor* Actor, FAIStimulus Stimulus);
 	AAnimalBaseController();
 
 protected:
+	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 	virtual void OnPossess(APawn* Inpawn) override;
+	
 
 private:
 
