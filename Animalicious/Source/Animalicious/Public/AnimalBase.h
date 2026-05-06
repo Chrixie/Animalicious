@@ -7,10 +7,12 @@
 #include "GameFramework/Character.h"
 #include "Components/TextRenderComponent.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "GameplayTagContainer.h"
+#include "GameplayTagAssetInterface.h"
 #include "AnimalBase.generated.h"
 
 UCLASS()
-class ANIMALICIOUS_API AAnimalBase : public ACharacter
+class ANIMALICIOUS_API AAnimalBase : public ACharacter, public IGameplayTagAssetInterface
 {
 	GENERATED_BODY()
 
@@ -27,11 +29,22 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetDebugStatusText(FText StatusDebugText);
+	
+	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
+	virtual bool HasMatchingGameplayTag(FGameplayTag TagToCheck) const override;
+	virtual bool HasAllMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const override;
+	virtual bool HasAnyMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const override;
 
 	//------------------------------------------------------------------------------------------------------------
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DATA")
 	UAnimalDataAsset* AnimalDA;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay Tags")
+	FGameplayTagContainer GameplayTags;
 
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)	
+	//FSurvivalStats SurvivalStats;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float CurrentHealth;	
 	

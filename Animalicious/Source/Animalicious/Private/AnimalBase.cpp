@@ -27,6 +27,7 @@ void AAnimalBase::PostInitializeComponents()
 	Super::PostInitializeComponents();
 	
 	AIPerceptionSource = FindComponentByClass<UAIPerceptionStimuliSourceComponent>();
+	
 }
 
 // Called when the game starts or when spawned
@@ -39,12 +40,13 @@ void AAnimalBase::BeginPlay()
 		UE_LOG(LogTemp, Error, TEXT("AnimalDA IS NOT VALID"));
 			return;
 	}
+	SetupStats();
 
 	// AIPerceptionSource->RegisterForSense(TSubclassOf<UAISense_Sight>());
 	// AIPerceptionSource->RegisterForSense(TSubclassOf<UAISense_Hearing>());
 	// AIPerceptionSource->RegisterWithPerceptionSystem();
 
-	SetupStats();
+
 }
 
 // Called every frame
@@ -81,26 +83,29 @@ void AAnimalBase::SetupStats()
 {
 	const FCombatStats* CombatStats = &AnimalDA->CombatStats;
 	const FSurvivalStats* SurvivalStats = &AnimalDA->SurvivalStats;
-	const FGamePlayTagOrThreats* GameplayTags = &AnimalDA->GamePlayTagOrThreats;
+	const FGamePlayTagOrThreats* GameplayTagsToT = &AnimalDA->GamePlayTagOrThreats;
 	
-	//Combatstats
+	//SurvivalStats = AnimalDA->SurvivalStats;
+	
+	// //Combatstats
 	CurrentHealth = CombatStats->MaxHealth;
 	Damage = CombatStats->Damage;
 	IsPredator = CombatStats->IsPredator;
-	
+	//
 	//SurvivalStats
 	CurrentHunger = SurvivalStats->MaxHunger;
 	CurrentThirst = SurvivalStats->MaxThirst;
 	
 	//GameplayTags
-	ThreatTags = GameplayTags->ThreatTags;
-	PreyTags = GameplayTags->PreyTags;
-	GameplayTag = GameplayTags->GameplayTag;
+	ThreatTags = GameplayTagsToT->ThreatTags;
+	PreyTags = GameplayTagsToT->PreyTags;
+	GameplayTag = GameplayTagsToT->GameplayTag;
 
 }
 
 void AAnimalBase::DecreaseHunger(float DeltaTime)
 {
+	//SurvivalStats.MaxHunger -= DeltaTime * SurvivalStats.DecayValue;
 	CurrentHunger -= AnimalDA->SurvivalStats.DecayValue * DeltaTime;
 }
 
@@ -113,6 +118,33 @@ void AAnimalBase::SetDebugStatusText(FText StatusDebugText)
 {
 	StatusText->SetText((StatusDebugText));
 }
+
+
+
+//------------------------------------------------------GameplayTagAssetInterface ------------------------------------------------------
+
+void AAnimalBase::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
+{
+}
+
+bool AAnimalBase::HasMatchingGameplayTag(FGameplayTag TagToCheck) const
+{
+	return IGameplayTagAssetInterface::HasMatchingGameplayTag(TagToCheck);
+}
+
+bool AAnimalBase::HasAllMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const
+{
+	return IGameplayTagAssetInterface::HasAllMatchingGameplayTags(TagContainer);
+}
+
+
+bool AAnimalBase::HasAnyMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const
+{
+	return IGameplayTagAssetInterface::HasAnyMatchingGameplayTags(TagContainer);
+}
+
+//------------------------------------------------------GameplayTagAssetInterface ------------------------------------------------------
+
 
 void AAnimalBase::StatusTextInit()
 {
