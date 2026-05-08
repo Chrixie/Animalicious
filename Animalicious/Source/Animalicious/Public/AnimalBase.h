@@ -4,6 +4,7 @@
 
 #include "AnimalDataAsset.h"
 #include "CoreMinimal.h"
+#include "AnimalDataTable.h"
 #include "GameFramework/Character.h"
 #include "Components/TextRenderComponent.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
@@ -16,41 +17,74 @@ class ANIMALICIOUS_API AAnimalBase : public ACharacter, public IGameplayTagAsset
 {
 	GENERATED_BODY()
 
-
 public:
 	AAnimalBase();
 
 	virtual void Tick(float DeltaTime) override;
 
-	FORCEINLINE UAnimalDataAsset* GetAnimalDA() const { return AnimalDA; }
+	FAnimalDataTable GetAnimalDA() const
+	{
+		if (!AnimalRowHandle.IsNull())
+		{
+			if (FAnimalDataTable* Row = AnimalRowHandle.GetRow<FAnimalDataTable>(TEXT("ControllerConfig")))
+			{
+				return *Row;
+			}
+		}
+		return FAnimalDataTable();
+	}
 
+	
+	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UFUNCTION(BlueprintCallable)
 	void SetDebugStatusText(FText StatusDebugText);
-	
+
 	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
 	virtual bool HasMatchingGameplayTag(FGameplayTag TagToCheck) const override;
 	virtual bool HasAllMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const override;
 	virtual bool HasAnyMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const override;
 
-	//------------------------------------------------------------------------------------------------------------
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DATA")
-	UAnimalDataAsset* AnimalDA;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay Tags")
-	FGameplayTagContainer GameplayTags;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite)	
-	//FSurvivalStats SurvivalStats;
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DATA")
+	// UAnimalDataAsset* AnimalDA;	
+
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DATA")
+	// FAnimalDataTable AnimalDA;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DATA")
+	FDataTableRowHandle AnimalRowHandle;
+
+
+	// -------------------------------------------DATA ASSET REFS --------------------------------
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float CurrentHealth;	
-	
+	FGamePlayTagOrThreats GameplayTagOrThreats;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FCombatStats CombatStats;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FSurvivalStats SurvivalStats;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FMoveStats MoveStats;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FDetection Detection;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FStimuli Stimuli;
+	// -------------------------------------------DATA ASSET REFS --------------------------------
+
+	// ------------------------------------------VARIABLES---------------------------------------
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float CurrentHealth;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Damage;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsDead;
 
@@ -59,36 +93,32 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float CurrentThirst;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool IsPredator;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGameplayTagContainer ThreatTags;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGameplayTagContainer PreyTags;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGameplayTag GameplayTag;
-	
+	// ------------------------------------------VARIABLES---------------------------------------
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UTextRenderComponent> StatusText;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Perception Listener")
 	TObjectPtr<UAIPerceptionStimuliSourceComponent> AIPerceptionSource;
 
-
 protected:
 	virtual void PostInitializeComponents() override;
-	
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-
-
 private:
-
 	//Setting up all stat values from Data Asset
 	void SetupStats();
 
@@ -96,6 +126,4 @@ private:
 	void DecreaseThirst(float DeltaTime);
 
 	void StatusTextInit();
-
-
 };

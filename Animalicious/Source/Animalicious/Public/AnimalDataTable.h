@@ -1,44 +1,41 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
-#include "Engine/DataAsset.h"
-#include "AnimalDataAsset.generated.h"
+#include "AnimalDataTable.generated.h"
 
 USTRUCT(BlueprintType)
-struct FGamePlayTagOrThreatss
+struct FGamePlayTagOrThreats
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, meta=(Categories="Species"))
 	FGameplayTagContainer ThreatTags;	
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, meta=(Categories="Species"))
 	FGameplayTagContainer PreyTags;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, meta=(Categories="Species"))
 	FGameplayTag GameplayTag;
 };
 
 USTRUCT(BlueprintType)
-struct FCombatStatss
+struct FCombatStats
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Survival Stats")
 	float MaxHealth = 100.0f;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Survival Stats")
 	float Damage = 1.0f;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Survival Stats")
 	bool IsPredator = false;
 };
 
 USTRUCT(BlueprintType)
-struct FSurvivalStatss
+struct FSurvivalStats
 {
 	GENERATED_BODY()
 	
@@ -53,19 +50,19 @@ struct FSurvivalStatss
 };
 
 USTRUCT(BlueprintType)
-struct FMoveStatss
+struct FMoveStats
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement Stats")
+	UPROPERTY(EditAnywhere, Category = "Movement Stats")
 	float WalkSpeed = 100.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement Stats")
+	UPROPERTY(EditAnywhere, Category = "Movement Stats")
 	float SprintSpeed = 200.0f;
 };
 
 USTRUCT(BlueprintType)
-struct FDetections
+struct FDetection
 {
 	GENERATED_BODY()
 
@@ -78,7 +75,7 @@ struct FDetections
 };
 
 USTRUCT(BlueprintType)
-struct FStimulis
+struct FStimuli 
 {
 	GENERATED_BODY()
 
@@ -98,28 +95,26 @@ struct FStimulis
 	float FOV = 180;
 };
 
-UCLASS()
-class ANIMALICIOUS_API UAnimalDataAsset : public UPrimaryDataAsset
+USTRUCT(BlueprintType)
+struct ANIMALICIOUS_API FAnimalDataTable: public FTableRowBase
 {
 	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, meta = (ShowOnlyInnerProperties))
+	FGamePlayTagOrThreats GamePlayTagOrThreats;
+	
+	UPROPERTY(EditAnywhere, meta = (ShowOnlyInnerProperties))
+	FCombatStats CombatStats;
+	
+	UPROPERTY(EditAnywhere, meta = (ShowOnlyInnerProperties))
+	FSurvivalStats SurvivalStats;
+	
+	UPROPERTY(EditAnywhere, meta = (ShowOnlyInnerProperties))
+	FMoveStats FMoveStats;
+	
+	UPROPERTY(EditAnywhere, meta = (ShowOnlyInnerProperties))
+	FDetection Detection;
 
-public:
-	UPROPERTY(EditAnywhere)
-	FGamePlayTagOrThreatss GamePlayTagOrThreats;
-	
-	UPROPERTY(EditAnywhere)
-	FCombatStatss CombatStats;
-	
-	UPROPERTY(EditAnywhere)
-	FSurvivalStatss SurvivalStats;
-	
-	UPROPERTY(EditAnywhere)
-	FMoveStatss FMoveStats;
-	
-	UPROPERTY(EditAnywhere)
-	FDetections Detection;
-
-	UPROPERTY(EditAnywhere)
-	FStimulis Stimuli;
-
+	UPROPERTY(EditAnywhere, meta = (ShowOnlyInnerProperties))
+	FStimuli Stimuli;
 };

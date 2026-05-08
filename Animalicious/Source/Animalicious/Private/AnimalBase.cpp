@@ -10,24 +10,22 @@ AAnimalBase::AAnimalBase()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	
+
 	// AIPerceptionSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("AIPerceptionStimuliSource"));
 	// AIPerceptionSource->RegisterForSense(TSubclassOf<UAISense_Sight>());
 	// AIPerceptionSource->RegisterForSense(TSubclassOf<UAISense_Hearing>());
 	// AIPerceptionSource->RegisterForSense(TSubclassOf<UAISense_Damage>());
 	// AIPerceptionSource->RegisterWithPerceptionSystem();
-	
+
 	StatusText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("StatusText"));
 	StatusTextInit();
-	
 }
 
 void AAnimalBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	
+
 	AIPerceptionSource = FindComponentByClass<UAIPerceptionStimuliSourceComponent>();
-	
 }
 
 // Called when the game starts or when spawned
@@ -35,90 +33,94 @@ void AAnimalBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (!IsValid(AnimalDA))
+	if (!AnimalRowHandle.IsNull())
 	{
-		UE_LOG(LogTemp, Error, TEXT("AnimalDA IS NOT VALID"));
-			return;
+		SetupStats();
+		UE_LOG(LogTemp, Error, TEXT("I HAVE A ROW"));
 	}
-	SetupStats();
+	if (AnimalRowHandle.IsNull())
+	{
+		UE_LOG(LogTemp, Error, TEXT("I DO NOT HAVE A ROW"));
+	}
 
 	// AIPerceptionSource->RegisterForSense(TSubclassOf<UAISense_Sight>());
 	// AIPerceptionSource->RegisterForSense(TSubclassOf<UAISense_Hearing>());
 	// AIPerceptionSource->RegisterWithPerceptionSystem();
-
-
 }
 
 // Called every frame
 void AAnimalBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
-	StatusText->SetWorldRotation(FRotator(0.0f,0.0f,0.0f));
-	
+
+	StatusText->SetWorldRotation(FRotator(0.0f, 0.0f, 0.0f));
+
 	if (!bIsDead && GetCharacterMovement()->Velocity.Length() > 0.1f)
-	UAISense_Hearing::ReportNoiseEvent(GetWorld(), GetActorLocation(), 1, this, 0);
-	
+		UAISense_Hearing::ReportNoiseEvent(GetWorld(), GetActorLocation(), 1, this, 0);
+
 	if (!bIsDead)
 	{
-	DecreaseHunger(DeltaTime);
-	DecreaseThirst(DeltaTime);
+		DecreaseHunger(DeltaTime);
+		DecreaseThirst(DeltaTime);
 	}
-	
-	
+
+
 	if (CurrentHealth <= 0.0f)
 		bIsDead = true;
-
 }
 
 // Called to bind functionality to input
 void AAnimalBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-
 }
 
 void AAnimalBase::SetupStats()
 {
-	const FCombatStats* CombatStats = &AnimalDA->CombatStats;
-	const FSurvivalStats* SurvivalStats = &AnimalDA->SurvivalStats;
-	const FGamePlayTagOrThreats* GameplayTagsToT = &AnimalDA->GamePlayTagOrThreats;
-	
-	//SurvivalStats = AnimalDA->SurvivalStats;
-	
-	// //Combatstats
-	CurrentHealth = CombatStats->MaxHealth;
-	Damage = CombatStats->Damage;
-	IsPredator = CombatStats->IsPredator;
-	//
-	//SurvivalStats
-	CurrentHunger = SurvivalStats->MaxHunger;
-	CurrentThirst = SurvivalStats->MaxThirst;
-	
-	//GameplayTags
-	ThreatTags = GameplayTagsToT->ThreatTags;
-	PreyTags = GameplayTagsToT->PreyTags;
-	GameplayTag = GameplayTagsToT->GameplayTag;
+	//const FCombatStats* CombatStats = &AnimalDA->CombatStats;
+	//const FSurvivalStats* SurvivalStats = &AnimalDA->SurvivalStats;
+	//const FGamePlayTagOrThreats* GameplayTagsToT = &AnimalDA->GamePlayTagOrThreats;
 
+	FAnimalDataTable* AnimalData = AnimalRowHandle.GetRow<FAnimalDataTable>(TEXT("AnimalData"));
+
+	if (AnimalData)
+	{
+		GameplayTagOrThreats = AnimalData->GamePlayTagOrThreats;
+		CombatStats = AnimalData->CombatStats;
+		SurvivalStats = AnimalData->SurvivalStats;
+
+
+		// //Combatstats
+		CurrentHealth = CombatStats.MaxHealth;
+		Damage = CombatStats.Damage;
+		IsPredator = CombatStats.IsPredator;
+
+		//SurvivalStats
+		CurrentHunger = SurvivalStats.MaxHunger;
+		CurrentThirst = SurvivalStats.MaxThirst;
+
+		//GameplayTags
+		ThreatTags = GameplayTagOrThreats.ThreatTags;
+		PreyTags = GameplayTagOrThreats.PreyTags;
+		GameplayTag = GameplayTagOrThreats.GameplayTag;
+	}
 }
 
 void AAnimalBase::DecreaseHunger(float DeltaTime)
 {
 	//SurvivalStats.MaxHunger -= DeltaTime * SurvivalStats.DecayValue;
-	CurrentHunger -= AnimalDA->SurvivalStats.DecayValue * DeltaTime;
+	CurrentHunger -= SurvivalStats.DecayValue * DeltaTime;
 }
 
 void AAnimalBase::DecreaseThirst(float DeltaTime)
 {
-	CurrentThirst -= AnimalDA->SurvivalStats.DecayValue * DeltaTime;
+	CurrentThirst -= SurvivalStats.DecayValue * DeltaTime;
 }
 
 void AAnimalBase::SetDebugStatusText(FText StatusDebugText)
 {
 	StatusText->SetText((StatusDebugText));
 }
-
 
 
 //------------------------------------------------------GameplayTagAssetInterface ------------------------------------------------------
@@ -152,6 +154,5 @@ void AAnimalBase::StatusTextInit()
 	StatusText->SetHorizontalAlignment(EHTA_Center);
 	StatusText->SetWorldSize(50.0f);
 	StatusText->SetTextRenderColor(FColor::Red);
-	StatusText->SetRelativeLocation(FVector(0,0,40));
+	StatusText->SetRelativeLocation(FVector(0, 0, 40));
 }
-

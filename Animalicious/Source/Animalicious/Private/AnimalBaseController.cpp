@@ -50,11 +50,11 @@ void AAnimalBaseController::OnPossess(APawn* Inpawn)
 
 	AnimalBase = Cast<AAnimalBase>(Inpawn);
 
-	if (AnimalBase && AnimalBase->GetAnimalDA())
+	if (AnimalBase)
 	{
-		const UAnimalDataAsset* AnimalDA = AnimalBase->GetAnimalDA();
-		const FDetection& AnimalDADetection = AnimalDA->Detection;
-		const FStimuli& AnimalDAStimuli = AnimalDA->Stimuli;
+		const FAnimalDataTable& AnimalDA = AnimalBase->GetAnimalDA();
+		const FDetection& AnimalDADetection = AnimalDA.Detection;
+		const FStimuli& AnimalDAStimuli = AnimalDA.Stimuli;
 
 		if (AIPerception)
 		{
