@@ -67,11 +67,11 @@ struct FDetection
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	bool bDetectEnemies = false;
+	bool bDetectEnemies = true;
 	UPROPERTY(EditAnywhere)
-	bool bDetectFriendlies = false;
+	bool bDetectFriendlies = true;
 	UPROPERTY(EditAnywhere)
-	bool bDetectNeutral = false;
+	bool bDetectNeutral = true;
 };
 
 USTRUCT(BlueprintType)
