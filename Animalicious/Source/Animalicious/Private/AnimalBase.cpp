@@ -127,6 +127,7 @@ void AAnimalBase::SetDebugStatusText(FText StatusDebugText)
 
 void AAnimalBase::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
 {
+	TagContainer.AddTag(GameplayTag);
 }
 
 bool AAnimalBase::HasMatchingGameplayTag(FGameplayTag TagToCheck) const
